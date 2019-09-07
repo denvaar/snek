@@ -1,0 +1,13 @@
+{
+  "name": "snek",
+  "version": "1.0.0",
+  "main": "./dist/app.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^12.7.4",
+    "typescript": "^3.6.2"
+  },
+  "scripts": {
+    "dev": "tsc --watch"
+  }
+}
