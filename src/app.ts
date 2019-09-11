@@ -10,9 +10,10 @@ if (process.stdin.setRawMode) {
 
 const msPerFrame: number = 66;
 const initialState: GameState = {
-  snake: [[4, 5], [3, 5], [2, 5], [1, 5]],
+  status: 'playing',
+  snake: [[7, 1], [6, 1], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1]],
   heading: 'right',
-  food: [10, 5],
+  food: [10, 10],
 };
 // global for now :(
 var lastPressed: Direction = 'right';
@@ -23,6 +24,10 @@ const gameLoop = (state: GameState): void => {
     drawGame(state);
 
     // update game state
+    if (state.status === 'game_over') {
+      process.stdout.write('\x07');
+      process.exit();
+    }
     let nextState = processInput(state, lastPressed);
     nextState = processPosition(nextState);
 
@@ -34,16 +39,27 @@ const gameLoop = (state: GameState): void => {
 process.stdin.on('keypress', (str, {ctrl, name}) => {
   if (ctrl && name === 'c') process.exit();
 
-  if (['left', 'right', 'up', 'down'].includes(name)) {
+  if (['left', 'right', 'up', 'down', 'h', 'j', 'k', 'l'].includes(name)) {
+    const vimMapping: any = {
+      h: 'left',
+      l: 'right',
+      k: 'up',
+      j: 'down',
+    };
+
+    let keyName: Direction = vimMapping[name];
+    if (!keyName) keyName = name;
+
     if (
-      (lastPressed === 'left' && name === 'right') ||
-      (lastPressed === 'right' && name === 'left') ||
-      (lastPressed === 'up' && name === 'down') ||
-      (lastPressed === 'down' && name === 'up')
+      (lastPressed === 'left' && keyName === 'right') ||
+      (lastPressed === 'right' && keyName === 'left') ||
+      (lastPressed === 'up' && keyName === 'down') ||
+      (lastPressed === 'down' && keyName === 'up')
     ) {
       return;
     }
-    lastPressed = name;
+
+    lastPressed = keyName;
   }
 });
 

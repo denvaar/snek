@@ -1,3 +1,6 @@
+import config from './config';
+import {pad} from './utils';
+
 const colors = {
   magenta: '\x1b[35m',
   green: '\x1b[32m',
@@ -6,30 +9,43 @@ const colors = {
 
 const drawGame = ({snake, food, heading}: GameState): void => {
   const {magenta, green, reset} = colors;
-  console.clear();
-  const topRow =
-    '┌────────────────────────────────────────────────────────────────────┐';
-  const middleRows = [];
-  for (let i = 0; i < 20; i++) {
+  const topRow = Array.from(
+    '┌────────────────────────────────────────────────────────────────────┐',
+  );
+  const bottomRow = Array.from(
+    '└────────────────────────────────────────────────────────────────────┘',
+  );
+  const screen = [];
+  for (let i = 0; i < config.screen.height; i++) {
     let rowData: Array<string> = Array.from(
       '│                                                                    │',
     );
-    if (i === food[0]) rowData[food[1]] = `${magenta}✿${reset}`;
+    if (i === 0) {
+      rowData = topRow;
+    }
+    if (i === config.screen.height - 1) {
+      rowData = bottomRow;
+    }
+    if (i === food[1]) rowData[food[0]] = `${magenta}█${reset}`;
+
     for (let s = 0; s < snake.length; s++) {
       const [col, row] = snake[s];
       if (row === i) {
         rowData[col] = `${green}█${reset}`;
       }
     }
-    middleRows.push(rowData.join(''));
+
+    screen.push(rowData.join(''));
   }
-  const bottomRow =
-    '└────────────────────────────────────────────────────────────────────┘';
-  console.log(
-    `${topRow}\n${middleRows.join('\n')}\n${bottomRow}\n\nSnek Length: ${
-      snake.length
-    }`,
-  );
+
+  const gameInfo = `┌────────────────────────────┐
+│  Snek Length: ${pad(snake.length, 2)}           │
+└────────────────────────────┘
+`;
+  const instructions = 'Move snek with arrow keys, or h,j,k,l';
+
+  console.clear();
+  console.log(`${screen.join('\n')}\n\n${gameInfo}\n${instructions}`);
 };
 
 export default drawGame;
