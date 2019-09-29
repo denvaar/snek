@@ -4,10 +4,25 @@
   "main": "./dist/app.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^24.0.18",
     "@types/node": "^12.7.4",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
     "typescript": "^3.6.2"
   },
   "scripts": {
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:cov": "jest --coverage"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "\\.(ts|tsx)$": "ts-jest"
+    }
   }
 }
