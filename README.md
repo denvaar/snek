@@ -12,3 +12,16 @@ $ yarn
 $ yarn run dev
 $ node .
 ```
+### Running tests
+
+For a normal execution run:
+
+```bash
+$ yarn test
+```
+
+For a coverage report run:
+
+```bash
+$ yarn test:cov
+```
