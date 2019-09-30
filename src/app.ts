@@ -1,8 +1,8 @@
-import drawGame from './drawGame';
-import processInput from './processInput';
-import processPosition from './processPosition';
+import drawGame from "./drawGame";
+import processInput from "./processInput";
+import processPosition from "./processPosition";
 
-const readline = require('readline');
+const readline = require("readline");
 readline.emitKeypressEvents(process.stdin);
 if (process.stdin.setRawMode) {
   process.stdin.setRawMode(true);
@@ -10,13 +10,13 @@ if (process.stdin.setRawMode) {
 
 const msPerFrame: number = 66;
 const initialState: GameState = {
-  status: 'playing',
+  status: "playing",
   snake: [[7, 1], [6, 1], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1]],
-  heading: 'right',
-  food: [10, 10],
+  heading: "right",
+  food: [10, 10]
 };
 // global for now :(
-var lastPressed: Direction = 'right';
+var lastPressed: Direction = "right";
 
 const gameLoop = (state: GameState): void => {
   setTimeout(() => {
@@ -24,8 +24,8 @@ const gameLoop = (state: GameState): void => {
     drawGame(state);
 
     // update game state
-    if (state.status === 'game_over') {
-      process.stdout.write('\x07');
+    if (state.status === "game_over") {
+      process.stdout.write("\x07");
       process.exit();
     }
     let nextState = processInput(state, lastPressed);
@@ -36,25 +36,33 @@ const gameLoop = (state: GameState): void => {
   }, msPerFrame);
 };
 
-process.stdin.on('keypress', (str, {ctrl, name}) => {
-  if (ctrl && name === 'c') process.exit();
+process.stdin.on("keypress", (str, { ctrl, name }) => {
+  if (ctrl && name === "c") process.exit();
 
-  if (['left', 'right', 'up', 'down', 'h', 'j', 'k', 'l'].includes(name)) {
-    const vimMapping: any = {
-      h: 'left',
-      l: 'right',
-      k: 'up',
-      j: 'down',
+  type vimMappingProps = {
+    h: Direction;
+    j: Direction;
+    k: Direction;
+    l: Direction;
+    [index: string]: Direction;
+  };
+
+  if (["left", "right", "up", "down", "h", "j", "k", "l"].includes(name)) {
+    const vimMapping: vimMappingProps = {
+      h: "left",
+      l: "right",
+      k: "up",
+      j: "down"
     };
 
     let keyName: Direction = vimMapping[name];
     if (!keyName) keyName = name;
 
     if (
-      (lastPressed === 'left' && keyName === 'right') ||
-      (lastPressed === 'right' && keyName === 'left') ||
-      (lastPressed === 'up' && keyName === 'down') ||
-      (lastPressed === 'down' && keyName === 'up')
+      (lastPressed === "left" && keyName === "right") ||
+      (lastPressed === "right" && keyName === "left") ||
+      (lastPressed === "up" && keyName === "down") ||
+      (lastPressed === "down" && keyName === "up")
     ) {
       return;
     }
