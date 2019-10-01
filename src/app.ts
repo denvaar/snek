@@ -1,4 +1,5 @@
 import drawGame from "./drawGame";
+import move from "./move";
 import processInput from "./processInput";
 import processPosition from "./processPosition";
 
@@ -29,6 +30,7 @@ const gameLoop = (state: GameState): void => {
       process.exit();
     }
     let nextState = processInput(state, lastPressed);
+    nextState = move(nextState);
     nextState = processPosition(nextState);
 
     // repeat!
@@ -57,15 +59,6 @@ process.stdin.on("keypress", (str, { ctrl, name }) => {
 
     let keyName: Direction = vimMapping[name];
     if (!keyName) keyName = name;
-
-    if (
-      (lastPressed === "left" && keyName === "right") ||
-      (lastPressed === "right" && keyName === "left") ||
-      (lastPressed === "up" && keyName === "down") ||
-      (lastPressed === "down" && keyName === "up")
-    ) {
-      return;
-    }
 
     lastPressed = keyName;
   }
