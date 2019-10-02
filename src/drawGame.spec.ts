@@ -26,6 +26,7 @@ describe('draw game', () => {
     drawGame(initialState);
     expect(consoleLogMock.mock.calls[0]).toMatchSnapshot();
   });
+
   it('should write rainbow color snek', () => {
     const initialState: GameState = {
       status: 'playing',
