@@ -1,16 +1,16 @@
-const processInput = (state: GameState, desiredHeading: Direction): GameState => {
-  const heading = state.heading;
+const processInput = (state: GameState): GameState => {
+  const {heading, lastPressed } = state;
   if (
-    (heading === "left" && desiredHeading === "right") ||
-    (heading === "right" && desiredHeading === "left") ||
-    (heading === "up" && desiredHeading === "down") ||
-    (heading === "down" && desiredHeading === "up")
+    (heading === "left" && lastPressed === "right") ||
+    (heading === "right" && lastPressed === "left") ||
+    (heading === "up" && lastPressed === "down") ||
+    (heading === "down" && lastPressed === "up")
   ) {
     return state;
   }
   return {
     ...state,
-    heading: desiredHeading
+    heading: lastPressed
   };
 };
 
