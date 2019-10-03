@@ -1,5 +1,6 @@
 import config from "./config";
 import { pad } from "./utils";
+const { stdout, stdin } = process;
 
 let colorSpeed = 0;
 let colorModifier = 0;
@@ -66,8 +67,8 @@ const drawGame = ({ snake, food, heading }: GameState): void => {
 `;
   const instructions = "Move snek with arrow keys, or h,j,k,l";
 
-  console.clear();
-  console.log(`${screen.join("\n")}\n\n${gameInfo}\n${instructions}`);
+  process.stdout.write('\x1Bc');
+  process.stdout.write(`${screen.join("\n")}\n\n${gameInfo}\n${instructions}`);
 };
 
 export default drawGame;
