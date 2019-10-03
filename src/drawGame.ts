@@ -1,6 +1,5 @@
 import config from "./config";
 import { pad } from "./utils";
-const { stdout, stdin } = process;
 
 let colorSpeed = 0;
 let colorModifier = 0;
