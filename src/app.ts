@@ -9,7 +9,10 @@ if (process.stdin.setRawMode) {
   process.stdin.setRawMode(true);
 }
 
-const msPerFrame: number = 66;
+// these should be calculated based of the width & height
+const msPerFrameX: number = 66;
+const msPerFrameY: number = 100;
+
 const initialState: GameState = {
   status: "playing",
   snake: [[7, 1], [6, 1], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1]],
@@ -35,7 +38,7 @@ const gameLoop = (state: GameState): void => {
 
     // repeat!
     gameLoop(nextState);
-  }, msPerFrame);
+  }, ['left', 'right'].includes(state.heading) ? msPerFrameX : msPerFrameY);
 };
 
 process.stdin.on("keypress", (str, { ctrl, name }) => {
