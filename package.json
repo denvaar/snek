@@ -5,9 +5,19 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^12.7.4",
+    "husky": "3.0.8",
+    "prettier": "1.18.2",
+    "pretty-quick": "1.11.1",
     "typescript": "^3.6.2"
   },
   "scripts": {
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "checktypes": "tsc --noEmit --extendedDiagnostics"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "yarn checktypes"
+    }
   }
 }
