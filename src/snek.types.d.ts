@@ -8,3 +8,11 @@ interface GameState {
   food: Array<number>;
   lastPressed: Direction;
 }
+
+type vimMappingProps = {
+  h: Direction;
+  j: Direction;
+  k: Direction;
+  l: Direction;
+  [index: string]: Direction;
+};

@@ -1,5 +1,5 @@
 const processInput = (state: GameState): GameState => {
-  const {heading, lastPressed } = state;
+  const { heading, lastPressed } = state;
   if (
     (heading === "left" && lastPressed === "right") ||
     (heading === "right" && lastPressed === "left") ||
