@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "./dist/app.js",
   "license": "MIT",
+  "bin": {
+    "snek": "./dist/bin.js"
+  },
   "devDependencies": {
     "@types/node": "^12.7.4",
     "typescript": "^3.6.2"
