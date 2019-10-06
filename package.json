@@ -19,5 +19,8 @@
       "pre-commit": "pretty-quick --staged",
       "pre-push": "yarn checktypes"
     }
+  },
+  "dependencies": {
+    "play-sound": "^1.1.3"
   }
 }

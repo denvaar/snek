@@ -1,6 +1,15 @@
 import config from './config';
 import { getRandomInt } from './utils';
 
+const player = require('play-sound')({});
+
+const playNomSound = () => {
+  // "Chewing, Carrot, A.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
+  player.play('./chewing.wav', function(err: any) {
+    if (err) throw err;
+  });
+};
+
 const growSnake = (snake: Array<Array<number>>, heading: Direction): Array<Array<number>> => {
   if (heading === 'up' || heading === 'down') {
     return [...snake, [snake[snake.length - 1][0], snake[snake.length - 1][1] + 1]];
@@ -16,6 +25,7 @@ const processPosition = (state: GameState): GameState => {
   const [snakeCol, snakeRow] = snake[0];
 
   if (food[1] === snake[0][1] && food[0] === snake[0][0]) {
+    playNomSound();
     return {
       ...state,
       snake: growSnake(snake, state.heading),
