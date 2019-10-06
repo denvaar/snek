@@ -31,6 +31,7 @@ const processPosition = (state: GameState): GameState => {
   for (let i = 1; i < snake.length; i++) {
     const [snakeCol, snakeRow] = snake[i];
     if (snakeCol === snakeHeadCol && snakeRow === snakeHeadRow) {
+      soundService.playImpactSound();
       return {
         ...state,
         status: 'game_over',
