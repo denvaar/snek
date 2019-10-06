@@ -1,5 +1,5 @@
 import config from './config';
-import {pad} from './utils';
+import { pad } from './utils';
 
 let colorSpeed = 0;
 let colorModifier = 0;
@@ -15,7 +15,7 @@ const colors = {
 };
 
 const getRainbowColor = (index: number) => {
-  const {reset, ...rColors} = colors;
+  const { reset, ...rColors } = colors;
   const rainbowColors = Object.values(rColors);
 
   const moddedIndex = (index + colorModifier) % rainbowColors.length;
@@ -23,18 +23,18 @@ const getRainbowColor = (index: number) => {
   return rainbowColors[moddedIndex];
 };
 
-const drawGame = ({snake, food, heading}: GameState): void => {
-  const {magenta, green, reset} = colors;
+const drawGame = ({ snake, food, heading }: GameState): void => {
+  const { magenta, green, reset } = colors;
   const topRow = Array.from(
-    '┌────────────────────────────────────────────────────────────────────┐',
+    '┌────────────────────────────────────────────────────────────────────┐'
   );
   const bottomRow = Array.from(
-    '└────────────────────────────────────────────────────────────────────┘',
+    '└────────────────────────────────────────────────────────────────────┘'
   );
   const screen = [];
   for (let i = 0; i < config.screen.height; i++) {
     let rowData: Array<string> = Array.from(
-      '│                                                                    │',
+      '│                                                                    │'
     );
     if (i === 0) {
       rowData = topRow;
