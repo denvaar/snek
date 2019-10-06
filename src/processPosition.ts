@@ -1,14 +1,8 @@
 import config from './config';
 import { getRandomInt } from './utils';
+import SoundService from './soundService';
 
-const player = require('play-sound')({});
-
-const playNomSound = () => {
-  // "Chewing, Carrot, A.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org
-  player.play('./chewing.wav', function(err: any) {
-    if (err) throw err;
-  });
-};
+const soundService = SoundService.getInstance();
 
 const growSnake = (snake: Array<Array<number>>, heading: Direction): Array<Array<number>> => {
   if (heading === 'up' || heading === 'down') {
@@ -25,7 +19,7 @@ const processPosition = (state: GameState): GameState => {
   const [snakeCol, snakeRow] = snake[0];
 
   if (food[1] === snake[0][1] && food[0] === snake[0][0]) {
-    playNomSound();
+    soundService.playCoinSound();
     return {
       ...state,
       snake: growSnake(snake, state.heading),
@@ -36,7 +30,6 @@ const processPosition = (state: GameState): GameState => {
   const [snakeHeadCol, snakeHeadRow] = snake[0];
   for (let i = 1; i < snake.length; i++) {
     const [snakeCol, snakeRow] = snake[i];
-
     if (snakeCol === snakeHeadCol && snakeRow === snakeHeadRow) {
       return {
         ...state,
@@ -51,6 +44,7 @@ const processPosition = (state: GameState): GameState => {
     snakeRow >= config.screen.height - 1 ||
     snakeRow <= 0
   ) {
+    soundService.playImpactSound();
     return { ...state, status: 'game_over' };
   }
 
