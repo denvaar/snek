@@ -1,3 +1,5 @@
+import { ChildProcess } from 'child_process';
+
 const player = require('play-sound')({});
 
 export default class SoundService {
@@ -21,8 +23,12 @@ export default class SoundService {
     this.play('impact.wav');
   }
 
-  private play(soundName: string): void {
-    player.play(`${SoundService.soundsPath}${soundName}`, (err: Error): void => {
+  public playBackgroundSound(): ChildProcess {
+    return this.play('background.mp3');
+  }
+
+  private play(soundName: string): ChildProcess {
+    return player.play(`${SoundService.soundsPath}${soundName}`, (err: Error): void => {
       if (err) throw err;
     });
   }
