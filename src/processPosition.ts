@@ -23,6 +23,7 @@ const processPosition = (state: GameState): GameState => {
     return {
       ...state,
       snake: growSnake(snake, state.heading),
+      flashDuration: 1000,
       food: [getRandomInt(2, config.screen.width - 2), getRandomInt(2, config.screen.height - 2)],
     };
   }
