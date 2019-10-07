@@ -21,6 +21,8 @@ const initialState: GameState = {
   snake: [[7, 1], [6, 1], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1]],
   heading: 'right',
   food: [10, 10],
+  flashDuration: 0,
+  flashRotation: false,
 };
 // global for now :(
 var lastPressed: Direction = 'right';
@@ -39,6 +41,13 @@ const gameLoop = (state: GameState): void => {
       let nextState = processInput(state, lastPressed);
       nextState = move(nextState);
       nextState = processPosition(nextState);
+
+      if (nextState.flashDuration > 0) {
+        nextState.flashDuration -= ['left', 'right'].includes(state.heading)
+          ? msPerFrameX
+          : msPerFrameY;
+        nextState.flashRotation = !nextState.flashRotation;
+      }
 
       // repeat!
       gameLoop(nextState);

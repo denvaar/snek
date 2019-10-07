@@ -23,7 +23,9 @@ const getRainbowColor = (index: number) => {
   return rainbowColors[moddedIndex];
 };
 
-const drawGame = ({ snake, food, heading }: GameState): void => {
+const getFlashColor = (white: boolean) => (white ? '\u001b[37m' : '\u001b[30m');
+
+const drawGame = ({ snake, food, heading, flashDuration, flashRotation }: GameState): void => {
   const { magenta, green, reset } = colors;
   const topRow = Array.from(
     '┌────────────────────────────────────────────────────────────────────┐'
@@ -47,7 +49,10 @@ const drawGame = ({ snake, food, heading }: GameState): void => {
     for (let s = 0; s < snake.length; s++) {
       const [col, row] = snake[s];
       if (row === i) {
-        if (snake.length > 10) {
+        if (s == snake.length - 1 && flashDuration > 0) {
+          // last tile
+          rowData[col] = `${getFlashColor(flashRotation)}█${reset}`;
+        } else if (snake.length > 10) {
           rowData[col] = `${getRainbowColor(s)}█${reset}`;
         } else rowData[col] = `${green}█${reset}`;
       }
