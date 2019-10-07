@@ -2,6 +2,9 @@ import drawGame from './drawGame';
 import move from './move';
 import processInput from './processInput';
 import processPosition from './processPosition';
+import SoundService from './soundService';
+
+const soundService = SoundService.getInstance();
 
 const readline = require('readline');
 readline.emitKeypressEvents(process.stdin);
@@ -71,3 +74,9 @@ process.stdin.on('keypress', (str, { ctrl, name }) => {
 });
 
 gameLoop(initialState);
+
+const backgroundSound = soundService.playBackgroundSound();
+
+process.on('exit', () => {
+  backgroundSound.kill();
+});

@@ -94,3 +94,7 @@ typings/
 
 # ctags
 tags
+
+# MacOs
+.DS_Store
+**/*/.DS_Store
