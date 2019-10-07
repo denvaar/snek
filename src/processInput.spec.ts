@@ -50,28 +50,44 @@ describe('process Input', () => {
 
       test.each`
      headingInitial | headingCurrent | snakeInitial | snakeCurrent
-     ${'right'} | ${'left'} | ${[[1, 1], [2, 1], [3, 1]]} | ${[[0, 1], [1, 1], [2, 1]]}
-     ${'right'} | ${'up'} | ${[[1, 1], [2, 1], [3, 1]]} | ${[[1, 0], [1, 1], [2, 1]]}
-     ${'right'} | ${'down'} | ${[[1, 1], [2, 1], [3, 1]]} | ${[[1, 2], [1, 1], [2, 1]]}
-     ${'left'} | ${'right'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[4, 1], [3, 1], [2, 1]]}
-     ${'left'} | ${'up'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[3, 0], [3, 1], [2, 1]]}
-     ${'left'} | ${'down'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[3, 2], [3, 1], [2, 1]]}
-     ${'up'} | ${'right'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[4, 1], [3, 1], [2, 1]]}
-     ${'up'} | ${'left'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[2, 1], [3, 1], [2, 1]]}
-     ${'up'} | ${'down'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[3, 2], [3, 1], [2, 1]]}
-     ${'down'} | ${'right'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[4, 1], [3, 1], [2, 1]]}
-     ${'down'} | ${'left'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[2, 1], [3, 1], [2, 1]]}
-     ${'down'} | ${'up'} | ${[[3, 1], [2, 1], [1, 1]]} | ${[[3, 0], [3, 1], [2, 1]]}
+     ${'right'} | ${'up'}    | ${[[5, 5], [4, 5], [3, 5]]} | ${[[5, 4], [5, 5], [4, 5]]}
+     ${'right'} | ${'down'}  | ${[[5, 5], [4, 5], [3, 5]]} | ${[[5, 6], [5, 5], [4, 5]]}
+     ${'left'}  | ${'up'}    | ${[[5, 5], [6, 5], [7, 5]]} | ${[[5, 4], [5, 5], [6, 5]]}
+     ${'left'}  | ${'down'}  | ${[[5, 5], [6, 5], [7, 5]]} | ${[[5, 6], [5, 5], [6, 5]]}
+     ${'up'}    | ${'right'} | ${[[5, 5], [5, 6], [5, 7]]} | ${[[6, 5], [5, 5], [5, 6]]}
+     ${'up'}    | ${'left'}  | ${[[5, 5], [5, 6], [5, 7]]} | ${[[4, 5], [5, 5], [5, 6]]}
+     ${'down'}  | ${'right'} | ${[[5, 5], [5, 4], [5, 3]]} | ${[[6, 5], [5, 5], [5, 4]]}
+     ${'down'}  | ${'left'}  | ${[[5, 5], [5, 4], [5, 3]]} | ${[[4, 5], [5, 5], [5, 4]]}
     `('when changing heading from $headingInitial to $headingCurrent moves snake correctly',
         ({ headingInitial, headingCurrent, snakeInitial, snakeCurrent }) => {
           const initialState: GameState = {
             status: 'playing',
             snake: snakeInitial,
             heading: headingInitial,
-            food: [10, 10],
+            food: [5, 5],
           };
           const newState = processInput(initialState, headingCurrent);
           expect(newState.snake).toEqual(snakeCurrent);
+        })
+    });
+    describe('keeping direction', () => {
+
+      test.each`
+     headingInitial | snakeInitial | snakeCurrent
+     ${'right'} | ${[[5, 5], [4, 5], [3, 5]]} | ${[[6, 5], [5, 5], [4, 5]]}
+     ${'left'}  | ${[[5, 5], [6, 5], [7, 5]]} | ${[[4, 5], [5, 5], [6, 5]]}
+     ${'up'}    | ${[[5, 5], [5, 6], [5, 7]]} | ${[[5, 4], [5, 5], [5, 6]]}
+     ${'down'}  | ${[[5, 5], [5, 4], [5, 3]]} | ${[[5, 6], [5, 5], [5, 4]]}
+    `('when maintaining $headingInitial heading moves snake correctly',
+        ({ headingInitial, snakeInitial, snakeCurrent }) => {
+          const initialState: GameState = {
+            status: 'playing',
+            snake: snakeInitial,
+            heading: headingInitial,
+            food: [5, 5],
+          };
+          const newState = processInput(initialState, headingInitial);
+          expect(JSON.stringify(newState.snake)).toEqual(JSON.stringify(snakeCurrent));
         })
     });
   });
