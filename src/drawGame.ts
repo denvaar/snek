@@ -25,7 +25,14 @@ const getRainbowColor = (index: number) => {
 
 const getFlashColor = (white: boolean) => (white ? '\u001b[37m' : '\u001b[30m');
 
-const drawGame = ({ snake, food, heading, flashDuration, flashRotation }: GameState): void => {
+const drawGame = ({
+  snake,
+  food,
+  heading,
+  flashDuration,
+  flashRotation,
+  status,
+}: GameState): void => {
   const { magenta, green, reset } = colors;
   const topRow = Array.from(
     '┌────────────────────────────────────────────────────────────────────┐'
@@ -60,6 +67,17 @@ const drawGame = ({ snake, food, heading, flashDuration, flashRotation }: GameSt
 
     colorSpeed++;
     if (colorSpeed % 4 === 0) colorModifier++;
+
+    if (status === 'game_over' && i === Math.floor(config.screen.height / 2)) {
+      const MESSAGE = 'Game Over!';
+
+      for (let li = 0; li < MESSAGE.length; li++) {
+        const letter = MESSAGE[li];
+        const beginIndex = (rowData.length - MESSAGE.length) / 2;
+
+        rowData[beginIndex + li] = letter;
+      }
+    }
 
     screen.push(rowData.join(''));
   }
