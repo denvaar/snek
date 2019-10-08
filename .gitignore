@@ -91,3 +91,6 @@ typings/
 
 # Intellij files
 .idea
+
+# ctags
+tags
