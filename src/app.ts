@@ -95,10 +95,13 @@ process.stdin.on('keypress', (str, { ctrl, name }) => {
   }
 });
 
+process.stdout.write('\x1b[?25l');
+
 gameLoop(initialState);
 
 const backgroundSound = soundService.playBackgroundSound();
 
 process.on('exit', () => {
   backgroundSound.kill();
+  process.stdout.write('\x1b[?25h');
 });
