@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import drawGame from './drawGame';
+import drawGame, { drawScreen } from './drawGame';
 import move from './move';
 import processInput from './processInput';
 import processPosition from './processPosition';
@@ -31,6 +31,25 @@ const initialState: GameState = {
 var lastPressed: Direction = 'right';
 let rainbowModifier = 0;
 
+const gameOverAnimation = (snake_length: number) => {
+  let animation_loop = 5;
+
+  const animate = () => {
+    animation_loop--;
+    const invert = animation_loop % 2 === 0;
+    gameover(snake_length, invert);
+
+    if (animation_loop >= 0) {
+      setTimeout(animate, 500);
+    } else {
+      process.stdout.write('\x07');
+      process.exit();
+    }
+  };
+
+  setTimeout(animate, 250);
+};
+
 const gameLoop = (state: GameState): void => {
   setTimeout(
     () => {
@@ -39,9 +58,8 @@ const gameLoop = (state: GameState): void => {
 
       // update game state
       if (state.status === 'game_over') {
-        process.stdout.write('\x07');
-        gameover();
-        process.exit();
+        gameOverAnimation(state.snake.length);
+        return;
       }
       let nextState = processInput(state, lastPressed);
       nextState = move(nextState);
@@ -108,7 +126,7 @@ process.on('exit', () => {
   process.stdout.write('\x1b[?25h');
 });
 
-const gameover = () => {
+const gameover = (snake_length: number, invert: boolean) => {
   const path = './assets/screens/GAMEOVER.csv';
 
   const data = fs
@@ -116,8 +134,7 @@ const gameover = () => {
     .toString()
     .split('\n')
     .map(e => e.trim())
-    .map(e => e.split(',').map(e => e.trim()));
+    .map(e => e.split(',').map(e => Number(e.trim())));
 
-  //TODO use the nxn array to create data to draw onto the baord
-  // console.log(data);
+  drawScreen(data, snake_length, invert);
 };

@@ -22,6 +22,16 @@ const getRainbowColor = (index: number) => {
 
 const getFlashColor = (white: boolean) => (white ? '\u001b[37m' : '\u001b[30m');
 
+const getGameInfo = (length: number) => {
+  const gameInfo = `┌────────────────────────────┐
+│  Snek Length: ${pad(length, 2)}           │
+└────────────────────────────┘
+`;
+  const instructions = 'Move snek with arrow keys, or h,j,k,l';
+
+  return `\n\n${gameInfo}\n${instructions}`;
+};
+
 const drawGame = ({
   snake,
   food,
@@ -67,14 +77,51 @@ const drawGame = ({
     screen.push(rowData.join(''));
   }
 
-  const gameInfo = `┌────────────────────────────┐
-│  Snek Length: ${pad(snake.length, 2)}           │
-└────────────────────────────┘
-`;
-  const instructions = 'Move snek with arrow keys, or h,j,k,l';
-
   console.clear();
-  process.stdout.write(`${screen.join('\n')}\n\n${gameInfo}\n${instructions}`);
+  process.stdout.write(`${screen.join('\n')}${getGameInfo(snake.length)}`);
 };
 
 export default drawGame;
+
+const centerAndPadScreen = (screen: Array<Array<number>>, padVal: number = 2) => {
+  let newScreen: Array<Array<number>> = [];
+  const originalWidth = screen[0].length;
+  const originalHeight = screen.length;
+  const widthOffset = Math.round((config.screen.width - originalWidth) / 2);
+  const heightOffset = Math.round((config.screen.height - originalHeight) / 2);
+
+  for (let i = 0; i < config.screen.height; i++) {
+    if (i < heightOffset || i > config.screen.height - heightOffset - 1) {
+      newScreen[i] = new Array(config.screen.width).fill(padVal);
+    } else {
+      const paddedOffset = new Array(widthOffset).fill(padVal);
+      const rightOffset =
+        originalWidth % 2 == 0 ? paddedOffset : new Array(widthOffset - 1).fill(padVal);
+      newScreen[i] = [...paddedOffset, ...screen[i - heightOffset], ...rightOffset];
+    }
+  }
+
+  return newScreen;
+};
+
+export const drawScreen = (_screen: Array<Array<number>>, length: number, invert: boolean) => {
+  const screen = centerAndPadScreen(_screen);
+  let screenData: Array<string> = [];
+
+  for (let r = 0; r < screen.length; r++) {
+    const row = screen[r];
+    let rowData: Array<string> = [];
+    for (let c = 0; c < row.length; c++) {
+      let color = row[c] === 1 ? colors.magenta : colors.green;
+
+      if (invert) {
+        color = color === colors.magenta ? colors.green : colors.magenta;
+      }
+
+      rowData.push(`${color}█${colors.reset}`);
+    }
+    screenData.push(rowData.join(''));
+  }
+  console.clear();
+  process.stdout.write(`${screenData.join('\n')}${getGameInfo(length)}`);
+};
