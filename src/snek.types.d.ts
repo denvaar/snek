@@ -8,4 +8,6 @@ interface GameState {
   food: Array<number>;
   flashDuration: number;
   flashRotation: boolean;
+  rainbowOffset: number;
+  rainbowLength: number;
 }
