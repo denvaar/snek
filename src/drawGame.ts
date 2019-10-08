@@ -70,11 +70,10 @@ const drawGame = ({
 
     if (status === 'game_over' && i === Math.floor(config.screen.height / 2)) {
       const MESSAGE = 'Game Over!';
+      const beginIndex = (rowData.length - MESSAGE.length) / 2;
 
       for (let li = 0; li < MESSAGE.length; li++) {
         const letter = MESSAGE[li];
-        const beginIndex = (rowData.length - MESSAGE.length) / 2;
-
         rowData[beginIndex + li] = letter;
       }
     }
