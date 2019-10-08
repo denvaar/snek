@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import drawGame from './drawGame';
 import move from './move';
 import processInput from './processInput';
@@ -39,6 +40,7 @@ const gameLoop = (state: GameState): void => {
       // update game state
       if (state.status === 'game_over') {
         process.stdout.write('\x07');
+        gameover();
         process.exit();
       }
       let nextState = processInput(state, lastPressed);
@@ -105,3 +107,17 @@ process.on('exit', () => {
   backgroundSound.kill();
   process.stdout.write('\x1b[?25h');
 });
+
+const gameover = () => {
+  const path = './assets/screens/GAMEOVER.csv';
+
+  const data = fs
+    .readFileSync(path)
+    .toString()
+    .split('\n')
+    .map(e => e.trim())
+    .map(e => e.split(',').map(e => e.trim()));
+
+  //TODO use the nxn array to create data to draw onto the baord
+  // console.log(data);
+};
