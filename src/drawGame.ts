@@ -1,9 +1,6 @@
 import config from './config';
 import { pad } from './utils';
 
-let colorSpeed = 0;
-let colorModifier = 0;
-
 const colors = {
   red: '\x1b[31m',
   yellow: '\x1b[33m',
@@ -15,10 +12,10 @@ const colors = {
 };
 
 const getRainbowColor = (index: number) => {
-  const { reset, ...rColors } = colors;
+  const { reset, green, ...rColors } = colors;
   const rainbowColors = Object.values(rColors);
 
-  const moddedIndex = (index + colorModifier) % rainbowColors.length;
+  const moddedIndex = index % rainbowColors.length;
 
   return rainbowColors[moddedIndex];
 };
@@ -32,6 +29,8 @@ const drawGame = ({
   flashDuration,
   flashRotation,
   status,
+  rainbowOffset,
+  rainbowLength,
 }: GameState): void => {
   const { magenta, green, reset } = colors;
   const topRow = Array.from(
@@ -59,8 +58,9 @@ const drawGame = ({
         if (s == snake.length - 1 && flashDuration > 0) {
           // last tile
           rowData[col] = `${getFlashColor(flashRotation)}█${reset}`;
-        } else if (snake.length > 10) {
-          rowData[col] = `${getRainbowColor(s)}█${reset}`;
+        } else if (s >= rainbowOffset && s <= rainbowOffset + rainbowLength && snake.length > 10) {
+          const index = s - rainbowOffset;
+          rowData[col] = `${getRainbowColor(index)}█${reset}`;
         } else rowData[col] = `${green}█${reset}`;
       }
     }

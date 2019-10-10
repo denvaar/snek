@@ -23,9 +23,12 @@ const initialState: GameState = {
   food: [10, 10],
   flashDuration: 0,
   flashRotation: false,
+  rainbowOffset: 1,
+  rainbowLength: 1,
 };
 // global for now :(
 var lastPressed: Direction = 'right';
+let rainbowModifier = 0;
 
 const gameLoop = (state: GameState): void => {
   setTimeout(
@@ -48,6 +51,16 @@ const gameLoop = (state: GameState): void => {
           : msPerFrameY;
         nextState.flashRotation = !nextState.flashRotation;
       }
+
+      // Rainbow state
+      rainbowModifier++;
+      const adj = rainbowModifier % 3 == 0 ? 1 : 0;
+      nextState.rainbowOffset = (nextState.rainbowOffset + adj) % nextState.snake.length;
+      const maxLength = 5 + Math.round(nextState.snake.length / 5) * 5;
+      nextState.rainbowLength =
+        nextState.rainbowLength < maxLength ? nextState.rainbowLength + 1 : nextState.rainbowLength;
+
+      nextState.rainbowLength = nextState.rainbowOffset === 0 ? 0 : nextState.rainbowLength;
 
       // repeat!
       gameLoop(nextState);
@@ -82,10 +95,13 @@ process.stdin.on('keypress', (str, { ctrl, name }) => {
   }
 });
 
+process.stdout.write('\x1b[?25l');
+
 gameLoop(initialState);
 
 const backgroundSound = soundService.playBackgroundSound();
 
 process.on('exit', () => {
   backgroundSound.kill();
+  process.stdout.write('\x1b[?25h');
 });
