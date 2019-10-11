@@ -3,6 +3,7 @@ import move from './move';
 import processInput from './processInput';
 import processPosition from './processPosition';
 import SoundService from './soundService';
+import gameOverScreen from './gameOverScreen';
 
 const soundService = SoundService.getInstance();
 
@@ -38,6 +39,7 @@ const gameLoop = (state: GameState): void => {
 
       // update game state
       if (state.status === 'game_over') {
+        gameOverScreen(state.snake);
         process.stdout.write('\x07');
         process.exit();
       }
