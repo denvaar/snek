@@ -122,7 +122,7 @@ gameLoop(initialState);
 const backgroundSound = soundService.playBackgroundSound();
 
 process.on('exit', () => {
-  backgroundSound.kill();
+  if (backgroundSound) backgroundSound.kill();
   process.stdout.write('\x1b[?25h');
 });
 
