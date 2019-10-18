@@ -28,7 +28,7 @@ export default class SoundService {
   }
 
   private play(soundName: string): ChildProcess | null {
-    var isWav: boolean = !!soundName.match(/\.wav/);
+    var isWav: boolean = !!soundName.match(/\.wav$/);
     if (!isWav && player.player == 'aplay') {
       console.error("Warning: aplay can't play non raw wav format.");
       return null;
