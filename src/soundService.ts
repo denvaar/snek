@@ -23,13 +23,19 @@ export default class SoundService {
     this.play('impact.wav');
   }
 
-  public playBackgroundSound(): ChildProcess {
+  public playBackgroundSound(): ChildProcess | null {
     return this.play('background.mp3');
   }
 
-  private play(soundName: string): ChildProcess {
-    return player.play(`${SoundService.soundsPath}${soundName}`, (err: Error): void => {
-      if (err) throw err;
-    });
+  private play(soundName: string): ChildProcess | null {
+    var isWav: boolean = !!soundName.match(/\.wav/);
+    if (!isWav && player.player == 'aplay') {
+      console.error("Warning: aplay can't play non raw wav format.");
+      return null;
+    } else {
+      return player.play(`${SoundService.soundsPath}${soundName}`, (err: Error): void => {
+        if (err) throw err;
+      });
+    }
   }
 }
