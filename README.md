@@ -2,7 +2,7 @@
 
 Typescript and Node console app rendition of that one snake game.
 
-![Demo](snek.gif)
+![Demo](https://raw.githubusercontent.com/denvaar/snek/d3ae8cd0bcde6bfef37e21beff7ac9cb73e51492/snek.gif)
 
 ### Setup
 
