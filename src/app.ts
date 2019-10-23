@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import drawGame, { drawScreen } from './drawGame';
+import { drawGameInitial, drawGameDelta, drawScreen } from './drawGame';
 import move from './move';
 import processInput from './processInput';
 import processPosition from './processPosition';
@@ -53,9 +53,6 @@ const gameOverAnimation = (snake_length: number) => {
 const gameLoop = (state: GameState): void => {
   setTimeout(
     () => {
-      // draw game state
-      drawGame(state);
-
       // update game state
       if (state.status === 'game_over') {
         gameOverAnimation(state.snake.length);
@@ -81,6 +78,9 @@ const gameLoop = (state: GameState): void => {
         nextState.rainbowLength < maxLength ? nextState.rainbowLength + 1 : nextState.rainbowLength;
 
       nextState.rainbowLength = nextState.rainbowOffset === 0 ? 0 : nextState.rainbowLength;
+
+      // draw game state
+      drawGameDelta(state, nextState);
 
       // repeat!
       gameLoop(nextState);
@@ -117,6 +117,7 @@ process.stdin.on('keypress', (str, { ctrl, name }) => {
 
 process.stdout.write('\x1b[?25l');
 
+drawGameInitial(initialState);
 gameLoop(initialState);
 
 const backgroundSound = soundService.playBackgroundSound();

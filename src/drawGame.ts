@@ -20,68 +20,82 @@ const getRainbowColor = (index: number) => {
   return rainbowColors[moddedIndex];
 };
 
-const getFlashColor = (white: boolean) => (white ? '\u001b[37m' : '\u001b[30m');
-
-const getGameInfo = (length: number) => {
-  const gameInfo = `┌────────────────────────────┐
+const getGameInfo = (length: number) => `\n\n┌────────────────────────────┐
 │  Snek Length: ${pad(length, 2)}           │
-└────────────────────────────┘
-`;
-  const instructions = 'Move snek with arrow keys, or h,j,k,l';
+└────────────────────────────┘\n
+Move snek with arrow keys, or h,j,k,l`;
 
-  return `\n\n${gameInfo}\n${instructions}`;
+const objects = {
+  // creates a two dimensional array representing the screen
+  // indexing is by screen[y][x] !!! (row first, column second)
+  getScreen: (w: number, h: number): Array<Array<String>> => [
+    ['┌', ...'─'.repeat(w - 2), '┐'], // top row
+    ...Array(h - 2)
+      .fill(undefined)
+      .map(() => ['│', ...' '.repeat(w - 2), '│']), // mid rows
+    ['└', ...'─'.repeat(w - 2), '┘'], // bottom row
+    ...getGameInfo(0)
+      .split('\n')
+      .map(ln => Array.from(ln)), // append game info
+  ],
+  food: `${colors.magenta}█${colors.reset}`,
+  snake: `${colors.green}█${colors.reset}`,
+  getSnakeFlash: (white: boolean) => `${white ? '\u001b[37m' : '\u001b[30m'}█${colors.reset}`,
+  getSnakeRainbow: (idx: number) => `${getRainbowColor(idx)}█${colors.reset}`,
 };
 
-const drawGame = ({
-  snake,
-  food,
-  heading,
-  flashDuration,
-  flashRotation,
-  rainbowOffset,
-  rainbowLength,
-}: GameState): void => {
-  const { magenta, green, reset } = colors;
-  const topRow = Array.from(
-    '┌────────────────────────────────────────────────────────────────────┐'
-  );
-  const bottomRow = Array.from(
-    '└────────────────────────────────────────────────────────────────────┘'
-  );
-  const screen = [];
-  for (let i = 0; i < config.screen.height; i++) {
-    let rowData: Array<string> = Array.from(
-      '│                                                                    │'
-    );
-    if (i === 0) {
-      rowData = topRow;
-    }
-    if (i === config.screen.height - 1) {
-      rowData = bottomRow;
-    }
-    if (i === food[1]) rowData[food[0]] = `${magenta}█${reset}`;
+const drawGame = (
+  state: GameState,
+  setPixel: (x: number, y: number, val: String) => void
+): void => {
+  // draw food
+  const [fx, fy] = state.food;
+  setPixel(fx, fy, objects.food);
 
-    for (let s = 0; s < snake.length; s++) {
-      const [col, row] = snake[s];
-      if (row === i) {
-        if (s == snake.length - 1 && flashDuration > 0) {
-          // last tile
-          rowData[col] = `${getFlashColor(flashRotation)}█${reset}`;
-        } else if (s >= rainbowOffset && s <= rainbowOffset + rainbowLength && snake.length > 10) {
-          const index = s - rainbowOffset;
-          rowData[col] = `${getRainbowColor(index)}█${reset}`;
-        } else rowData[col] = `${green}█${reset}`;
-      }
-    }
+  // draw snake
+  for (let i = 0; i < state.snake.length; i++) {
+    const [x, y] = state.snake[i];
 
-    screen.push(rowData.join(''));
+    if (i == state.snake.length - 1 && state.flashDuration > 0)
+      setPixel(x, y, objects.getSnakeFlash(state.flashRotation));
+    else if (
+      i >= state.rainbowOffset &&
+      i <= state.rainbowOffset + state.rainbowLength &&
+      state.snake.length > 10
+    )
+      setPixel(x, y, objects.getSnakeRainbow(i - state.rainbowOffset));
+    else setPixel(x, y, objects.snake);
   }
 
-  console.clear();
-  process.stdout.write(`${screen.join('\n')}${getGameInfo(snake.length)}`);
+  // draw snek length
+  const lenStr = pad(state.snake.length, 2);
+  for (let i = 0; i < lenStr.length; i++)
+    setPixel('│  Snek Length: '.length + i, config.screen.height + 3, lenStr[i]);
 };
 
-export default drawGame;
+export const drawGameInitial = (state: GameState) => {
+  const screen = objects.getScreen(config.screen.width, config.screen.height);
+
+  const setPixel = (x: number, y: number, val: string) => (screen[y][x] = val);
+  drawGame(state, setPixel);
+
+  console.clear();
+  process.stdout.write(screen.map(ln => ln.join('')).join('\n'));
+};
+
+export const drawGameDelta = (oldState: GameState, nextState: GameState) => {
+  const writeAt = (x: number, y: number, val: string) =>
+    process.stdout.write(`\x1b[${y + 1};${x + 1}f${val}`);
+  const clearAt = (x: number, y: number, _: string) => writeAt(x, y, ' ');
+
+  // clear old game objects
+  drawGame(oldState, clearAt);
+  // draw new game objects
+  drawGame(nextState, writeAt);
+
+  // reset the cursor to the end of the screen
+  writeAt(0, config.screen.height + 7, '');
+};
 
 const centerAndPadScreen = (screen: Array<Array<number>>, padVal: number = 2) => {
   let newScreen: Array<Array<number>> = [];
